@@ -3,9 +3,7 @@ import { useContext } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 
-import images from "@/assets"
 import { NFTContext } from '@/context/NFTContext'
-import { shortenAddress } from '@/utils/shortenAddress'
 import Button from './Button'
 
 const NFTCard = ({ nft }) => {
