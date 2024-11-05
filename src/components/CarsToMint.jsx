@@ -18,8 +18,8 @@ const CarsToMint = () => {
     return (
         <>
         <div className="mt-3 flex flex-wrap justify-start md:justify-center">
-            {cars.map((nft) => <CarCard
-                key={nft.tokenId}
+            {cars?.map((nft,index) => <CarCard
+                key={index}
                 nft={nft}
             />)}
         </div>
