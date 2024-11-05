@@ -1,5 +1,5 @@
 export const nft_address = "0xfcC0Af9FAE7877bb1FEEb4fC52E0f00854A6049C";
-export const marketplace_address = "0xC8df55de095D80aD47796d6291665577e6574Bd5";
+export const market_address = "0xC8df55de095D80aD47796d6291665577e6574Bd5";
 
 export const nft_abi=[
     {
