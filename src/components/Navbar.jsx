@@ -27,7 +27,7 @@ const MenuItems = ({ isMobile, active, setActive }) => {
     return (
         <ul className={`list-none flexCenter flex-row ${isMobile && 'flex-col h-full'}`}>
             {
-                ['Explore NFTs', 'Listed NFTs', 'My NFTs'].map((item, i) => (
+                ['Mint', 'Trade', 'Dashboard'].map((item, i) => (
                     <li
                         key={i}
                         onClick={() => {
@@ -59,9 +59,9 @@ const Navbar = () => {
         <nav className='flexBetween w-full fixed z-10 p-4 flow-row border-b dark:bg-nft-dark bg-white dark:border-nft-black-1 border-nft-gray-1'>
             <div className='flex flex-1 flex-row justify-start'>
                 <Link href="/">
-                    <div className='flexCenter md:hidden cursor-pointer' onClick={() => setActive('Explore NFTs')}>
+                    <div className='flexCenter cursor-pointer' onClick={() => setActive('Explore NFTs')}>
                         <Image src={images.logo_} objectFit='contain' width={32} height={32} alt='logo' />
-                        <p className='dark:text-white text-nft-black-1 font-semibold text-lg ml-1'>Racecade Marketplace</p>
+                        {/* <p className='dark:text-white text-nft-black-1 font-semibold text-lg ml-1'>Racecade Marketplace</p> */}
                     </div>
                 </Link>
                 <Link href="/">
