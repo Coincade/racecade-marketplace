@@ -1,5 +1,4 @@
-"use client";
-
+"use client"
 import { useState, useEffect, useContext } from "react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -12,6 +11,7 @@ import { shortenAddress } from "@/utils/shortenAddress";
 import { LoaderIcon } from "lucide-react";
 import Bannerr from "@/components/Banner";
 import ProgressBar from "@/components/ProgressBar";
+import Button from "@/components/Button";
 
 const page = () => {
   const { currentAccount } = useContext(NFTContext);
@@ -42,44 +42,51 @@ const page = () => {
     setIsLoading(false);
   }, []);
 
-  if (isLoading)
+  if (isLoading) {
     return (
       <div className="h-[100dvh] w-full flex items-center justify-center">
         <LoaderIcon className="animate-spin w-20 h-20" />
       </div>
     );
+  }
 
   return (
-    <div className="relative flex justify-center md:flex-col min-h-screen ">
-      <div className="relative flex-1 flexCenter sm:px-4 p-12 border-r md:border-r-0 md:border-b dark:border-nft-black-1 border-nft-gray-1">
-        <div>
-          <Image
-            src={nft.image}
-            objectFit="cover"
-            className="rounded-xl shadow-lg"
-            layout="fill"
-            alt="nft-image"
-          />
-        </div>
+    <div className="grid grid-cols-2 min-h-screen gap-4">
+      {/* Image Div */}
+      <div className="p-4 border-2">
+        <Image
+          src={nft.image}
+          alt="NFT Image"
+          width={800}
+          height={700}
+          className="rounded-xl shadow-lg"
+        />
       </div>
-      <div className=" relative flex-1   flex-col items-start mt-[4.7rem] p-4">
-        <h1 className="text-4xl text-white font-poppins font-semibold ">
-          Car Name
-        </h1>
-        <p>
-          <strong>Owned by xyzz</strong>{" "}
-        </p>
 
-        <div className=" space-y-8 mt-5 text-white  ">
-          <ProgressBar title="Speed" value={50}/>
-          <ProgressBar title="Acceleration" value={80}/>
-          <ProgressBar title="Handling" value={20}/>
-          <p>
-            <strong>Bio:</strong>
-          </p>
-          <p className=" pt-24">
-            <strong>Price:</strong>
-          </p>
+      {/* Car Data Div */}
+      <div className="p-4 border-2 pt-20">
+        <h1 className="text-4xl font-bold font-poppins ">Car Name</h1>
+        <p className=" font-poppins">Owned by xyzz</p>
+
+        <div className="space-y-4 mt-4">
+          <div className="flex items-center">
+            <ProgressBar title="Speed" value={50} />
+          
+          </div>
+          <div className="flex items-center">
+            <ProgressBar title="Acceleration" value={80} />
+       
+          </div>
+          <div className="flex items-center">
+            <ProgressBar title="Handling" value={20} />
+       
+          </div>
+          <p>Bio:</p>
+          <p>Price:</p>
+        </div>
+
+        <div className="flex justify-end mt-4">
+          <Button btnName="List" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" />
         </div>
       </div>
     </div>
