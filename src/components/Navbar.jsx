@@ -7,7 +7,11 @@ import Link from 'next/link'
 
 
 import images from "@/assets"
-import { ConnectButton } from '@rainbow-me/rainbowkit'
+import { ConnectButton, useActiveAccount } from "thirdweb/react";
+
+import { client, wallets } from "../app/client"
+import { darkTheme } from "thirdweb/react";
+import { polygonAmoy, polygon } from "thirdweb/chains";
 
 
 const MenuItems = ({ isMobile, active, setActive }) => {
@@ -89,7 +93,22 @@ const Navbar = () => {
                 <div className='md:hidden flex'>
                     <MenuItems active={active} setActive={setActive} />
                     <div className='ml-4'>
-                        <ConnectButton />
+                        <ConnectButton
+                            client={client}
+                            wallets={wallets}
+                            theme={darkTheme({
+                                colors: {
+                                    modalBg: "hsl(228, 12%, 8%)",
+                                    primaryButtonBg: "linear-gradient(101.12deg,#c99b26 27.35%,#ebe534 99.99%,#ebe534 100%,#ebe534 100%)",
+                                    secondaryButtonText: "linear-gradient(101.12deg,#c99b26 27.35%,#ebe534 99.99%,#ebe534 100%,#ebe534 100%)",
+                                },
+                            })}
+                            connectModal={{
+                                size: "compact",
+                                titleIcon: "https://i.imgur.com/O3oHFPr.png",
+                                showThirdwebBranding: false,
+                            }}
+                        />
                     </div>
 
                 </div>
@@ -126,7 +145,22 @@ const Navbar = () => {
                             <MenuItems active={active} setActive={setActive} isMobile setIsOpen={setIsOpen} />
                         </div>
                         <div className="p-4 border-t dark:border-nft-black-1 border-nft-gray-1">
-                            <ConnectButton />
+                        <ConnectButton
+                            client={client}
+                            wallets={wallets}
+                            theme={darkTheme({
+                                colors: {
+                                    modalBg: "hsl(228, 12%, 8%)",
+                                    primaryButtonBg: "linear-gradient(101.12deg,#c99b26 27.35%,#ebe534 99.99%,#ebe534 100%,#ebe534 100%)",
+                                    secondaryButtonText: "linear-gradient(101.12deg,#c99b26 27.35%,#ebe534 99.99%,#ebe534 100%,#ebe534 100%)",
+                                },
+                            })}
+                            connectModal={{
+                                size: "compact",
+                                titleIcon: "https://i.imgur.com/O3oHFPr.png",
+                                showThirdwebBranding: false,
+                            }}
+                        />
                         </div>
                     </div>
                 )}
