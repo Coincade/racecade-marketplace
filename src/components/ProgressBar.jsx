@@ -18,7 +18,7 @@ const ProgressBar = ({title, value}) => {
             <strong>{title}:</strong>
           </p>
     <div className=" w-[80%] bg-gray-200 rounded-full h-2 border">
-      <div className="bg-yellow-500 h-2 rounded-full" style={{ width: `${progress}%` }} />
+      <div className="bg-yellow-500 h-[0.4rem] rounded-full" style={{ width: `${progress}%` }} />
     </div>
     </div>
   );

@@ -51,7 +51,19 @@ const page = () => {
   }
 
   return (
-    <div className="grid grid-cols-2 min-h-screen gap-4">
+
+  
+    <div className="flex flex-col min-h-screen">
+    {/* Banner Section */}
+   
+    <Banner
+            name="Your RaceCade Assets"
+            childStyles="text-center mb-4"
+            parentStyle="h-80 justify-center"
+        />
+
+    {/* Main Content Grid */}
+    <div className="grid grid-cols-2 gap-4 p-8 ">
       {/* Image Div */}
       <div className="p-4 border-2">
         <Image
@@ -64,32 +76,33 @@ const page = () => {
       </div>
 
       {/* Car Data Div */}
-      <div className="p-4 border-2 pt-20">
-        <h1 className="text-4xl font-bold font-poppins ">Car Name</h1>
-        <p className=" font-poppins">Owned by xyzz</p>
+      <div className="p-4 border-2 pt-10">
+        <h1 className="text-4xl font-bold font-poppins">Car Name</h1>
+        <p className="font-poppins">Owned by xyzz</p>
 
         <div className="space-y-4 mt-4">
           <div className="flex items-center">
             <ProgressBar title="Speed" value={50} />
-          
           </div>
           <div className="flex items-center">
             <ProgressBar title="Acceleration" value={80} />
-       
           </div>
           <div className="flex items-center">
             <ProgressBar title="Handling" value={20} />
-       
           </div>
           <p>Bio:</p>
           <p>Price:</p>
         </div>
 
         <div className="flex justify-end mt-4">
-          <Button btnName="List" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" />
+          <Button
+            btnName="List"
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          />
         </div>
       </div>
     </div>
+  </div>
   );
 };
 
