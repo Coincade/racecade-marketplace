@@ -2,15 +2,32 @@
 import { useContext } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import Star from '@/assets/Star 2.png'
+import WhiteStar from '@/assets/Star 5.png'
 
 import { NFTContext } from '@/context/NFTContext'
 import Button from './Button'
 
 const NFTCard = ({ nft }) => {
     const { nftCurrency } = useContext(NFTContext);
+
+    const stars = Array.from({ length: 5 }, (_, index) => (
+        <Image
+          key={index}
+          src={index < nft.car_level ? Star : WhiteStar} // Render filled or empty stars based on carLevel
+          alt="Star"
+          width={20}
+          height={20}
+        />
+      ));
+
+      
     return (
         <Link href={{ pathname: "/nft-details", query: nft }}>
             <div className="flex-1 min-w-215 max-w-max xs:max-w-none sm:w-full sm:min-w-155 minmd:min-w-256 minlg:min-w-327 dark:bg-nft-black-3 bg-white rounded-2xl p-4 m-4 minlg:m-8 sm:my-2 sm:mx-2 cursor-pointer shadow-md">
+            <div className="flex justify-left bg-[#212429]">
+              {stars} 
+            </div>
                 <div className="relative w-full h-52 sm:h-36 xs:h-56 minmd:h-60 minlg:h-300 rounded-2xl overflow-hidden">
                     <Image src={nft.image} layout="fill" objectFit="cover" alt={nft.name} />
                 </div>
