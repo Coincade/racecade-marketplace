@@ -10,6 +10,8 @@ import Banner from '@/components/Banner'
 import images from "@/assets"
 import { shortenAddress } from '@/utils/shortenAddress'
 import { LoaderIcon } from 'lucide-react'
+import Bannerr from '@/components/Banner';
+
 
 const page = () => {
 
@@ -19,11 +21,8 @@ const page = () => {
 
     const router = useRouter()
     const searchParams = useSearchParams()
-    const search = searchParams.get("name")
 
     useEffect(() => {
-        
-        console.log("Search ===>", search);
         
         setNft({
             image: searchParams.get("image"),
@@ -39,16 +38,30 @@ const page = () => {
 
     },[])
 
-    if(isLoading) return <LoaderIcon />
+    if(isLoading) return <div className='h-[100dvh] w-full flex items-center justify-center'><LoaderIcon  className='animate-spin w-20 h-20'/>
+    </div>
 
   return (
-    <div className='relative flex justify-center md:flex-col min-h-screen'>
-        <div className='relative flex-1 flexCenter sm:px-4 p-12 border-r md:border-r-0 md:border-b dark:border-nft-black-1 border-nft-gray-1'>
+    <div className='relative flex justify-center md:flex-col min-h-screen '>
+        <div className='relative flex-1 flexCenter sm:px-4 p-12 border-r md:border-r-0 md:border-b dark:border-nft-black-1 border-nft-gray-1'>      
             <div>
                 <Image src={nft.image} objectFit='cover' className='rounded-xl shadow-lg' layout='fill' alt='nft-image'/>
             </div>
+         </div>
+         <div className=' relative flex-1 z-10  flex-col items-start mt-[4.7rem] p-4'>         
+         <h1 className='text-4xl text-white font-poppins '>Car Name</h1>
+        <div className='space-y-5 mt-5 text-white  '>
+          <p><strong>Speed:</strong> </p>
+          <p><strong>Acceleration:</strong> </p>
+          <p><strong>Handling:</strong></p>
+          <p><strong>Bio:</strong></p>
+
         </div>
+             </div>
     </div>
+
+
+ 
   )
 }
 
