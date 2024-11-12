@@ -10,8 +10,15 @@ import images from "@/assets";
 import { shortenAddress } from "@/utils/shortenAddress";
 import { LoaderIcon } from "lucide-react";
 import Bannerr from "@/components/Banner";
-import ProgressBar from "@/components/ProgressBar";
+// import ProgressBar from "@/components/ProgressBar";
 import Button from "@/components/Button";
+import Cards from "@/components/Cards";
+import Horizontal from "@/assets/Rectangle 3257.png"
+import Horizontal1 from "@/assets/Rectangle 3256.png";
+import Horizontal2 from "@/assets/Rectangle 3257.png";
+import Horizontal3 from "@/assets/Rectangle 3258.png";
+import Horizontal4 from "@/assets/Rectangle 3259.png";
+import Horizontal5 from "@/assets/Rectangle 3260.png";
 
 const page = () => {
   const { currentAccount } = useContext(NFTContext);
@@ -23,6 +30,7 @@ const page = () => {
     owner: "",
     price: "",
     seller: "",
+    description:""
   });
 
   const router = useRouter();
@@ -36,6 +44,7 @@ const page = () => {
       owner: searchParams.get("owner"),
       price: searchParams.get("price"),
       seller: searchParams.get("seller"),
+      description: searchParams.get("description")
     });
     console.log("NFT ===> ", nft);
 
@@ -49,6 +58,8 @@ const page = () => {
       </div>
     );
   }
+
+
 
   return (
 
@@ -77,10 +88,28 @@ const page = () => {
 
       {/* Car Data Div */}
       <div className="p-4 border-2 pt-10">
-        <h1 className="text-4xl font-bold font-poppins">Car Name</h1>
-        <p className="font-poppins">Owned by xyzz</p>
+        <div className="flex flex-row">
+        <Image
+        src={Horizontal}
+        alt="This is Horizontal srcoll"
+        width={10}
+        height={10}
+        />
+       
+        <div className=" flex flex-col ml-2">
+        <h1 className="text-4xl font-bold font-poppins ">{nft.name}</h1>
+        <p className="font-poppins"> Owned by { nft.owner}</p>
+        </div>
+        </div>
+      
+        <div className=" flex flex-row">
+           <Cards title="type" value="xyz"/>
+           <Cards title="level" value= "guk"/>
+        </div>
+        
+        {/* {Progress Bar} */}
 
-        <div className="space-y-4 mt-4">
+        {/* <div className="space-y-4 mt-4">
           <div className="flex items-center">
             <ProgressBar title="Speed" value={50} />
           </div>
@@ -92,7 +121,10 @@ const page = () => {
           </div>
           <p>Bio:</p>
           <p>Price:</p>
-        </div>
+        </div> */}
+
+
+
 
         <div className="flex justify-end mt-4">
           <Button
