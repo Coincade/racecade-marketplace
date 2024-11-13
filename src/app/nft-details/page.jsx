@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { useState, useEffect, useContext } from "react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -13,16 +13,24 @@ import Bannerr from "@/components/Banner";
 // import ProgressBar from "@/components/ProgressBar";
 import Button from "@/components/Button";
 import Cards from "@/components/Cards";
-import Horizontal from "@/assets/Rectangle 3257.png"
+import Horizontal from "@/assets/Rectangle 3257.png";
 import Horizontal1 from "@/assets/Rectangle 3256.png";
-import Horizontal2 from "@/assets/Rectangle 3257.png";
 import Horizontal3 from "@/assets/Rectangle 3258.png";
 import Horizontal4 from "@/assets/Rectangle 3259.png";
 import Horizontal5 from "@/assets/Rectangle 3260.png";
+import ProfileBanner from "@/assets/ProfileBanner.png";
+
+import { useActiveAccount } from "thirdweb/react";
 
 const page = () => {
+
+  const activeAccount = useActiveAccount();
+    const wallet_address = activeAccount?.address;
+
   const { currentAccount } = useContext(NFTContext);
   const [isLoading, setIsLoading] = useState(true);
+  const [nftData, setNftData] = useState(null);
+  const [ownerAddress, setOwnerAddress] = useState("");
   const [nft, setNft] = useState({
     image: "",
     tokenId: "",
@@ -30,13 +38,39 @@ const page = () => {
     owner: "",
     price: "",
     seller: "",
-    description:""
+    description: "",
   });
+
+  const { fetchMyNFTs, ownedNFTs, fetchNFTDataById, fetchOwnerOfNFT } = useContext(NFTContext);
 
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  const getNFTData = async () => {
+    try {
+      const nft_data = await fetchNFTDataById(
+        Number(searchParams.get("tokenId"))
+      );
+      setNftData(nft_data);
+    } catch (error) {
+      return {};
+    }
+  };
+
+  const setOwnedUser =async () => {
+    try {
+      const owner_data = await fetchOwnerOfNFT(Number(searchParams.get("tokenId")));
+      console.log("owner_data:", owner_data);
+      setOwnerAddress(owner_data);
+      
+    } catch (error) {
+      return "Owner not Found"
+    }
+  }
+
+  
   useEffect(() => {
+    getNFTData();
     setNft({
       image: searchParams.get("image"),
       tokenId: searchParams.get("tokenId"),
@@ -44,12 +78,15 @@ const page = () => {
       owner: searchParams.get("owner"),
       price: searchParams.get("price"),
       seller: searchParams.get("seller"),
-      description: searchParams.get("description")
+      description: searchParams.get("description"),
     });
-    console.log("NFT ===> ", nft);
+    
+    setOwnedUser();
+    
+    if (currentAccount) fetchMyNFTs(currentAccount);
 
     setIsLoading(false);
-  }, []);
+  }, [currentAccount, fetchMyNFTs, searchParams]);
 
   if (isLoading) {
     return (
@@ -59,57 +96,81 @@ const page = () => {
     );
   }
 
+  console.log("nftData", nftData);
+  
 
+  const attributeValue = nftData?.attributes?.[0]?.value || null;
+
+  let displayImage = null;
+  if (attributeValue === "F") {
+    displayImage = Horizontal;
+  } else if (attributeValue === "A") {
+    displayImage = Horizontal4;
+  } else if (attributeValue === "B") {
+    displayImage = Horizontal1;
+  } else if (attributeValue === "S") {
+    displayImage = Horizontal3;
+  } else if (attributeValue === "C") {
+    displayImage = Horizontal5;
+  }
 
   return (
-
-  
     <div className="flex flex-col min-h-screen">
-    {/* Banner Section */}
-   
-    <Banner
-            name="Your RaceCade Assets"
-            childStyles="text-center mb-4"
-            parentStyle="h-80 justify-center"
-        />
+      {/* Banner Section */}
 
-    {/* Main Content Grid */}
-    <div className="grid grid-cols-2 gap-4 p-8 ">
-      {/* Image Div */}
-      <div className="p-4 border-2">
-        <Image
-          src={nft.image}
-          alt="NFT Image"
-          width={800}
-          height={700}
-          className="rounded-xl shadow-lg"
-        />
-      </div>
+      <Banner
+        name="Your RaceCade Assets"
+        childStyles="text-center mb-4"
+        parentStyle="h-80 justify-center"
+      />
 
-      {/* Car Data Div */}
-      <div className="p-4 border-2 pt-10">
-        <div className="flex flex-row">
-        <Image
-        src={Horizontal}
-        alt="This is Horizontal srcoll"
-        width={10}
-        height={10}
-        />
-       
-        <div className=" flex flex-col ml-2">
-        <h1 className="text-4xl font-bold font-poppins ">{nft.name}</h1>
-        <p className="font-poppins"> Owned by { nft.owner}</p>
-        </div>
-        </div>
-      
-        <div className=" flex flex-row">
-           <Cards title="type" value="xyz"/>
-           <Cards title="level" value= "guk"/>
-        </div>
-        
-        {/* {Progress Bar} */}
 
-        {/* <div className="space-y-4 mt-4">
+      {/* Main Content Grid */}
+      <div className="grid grid-cols-2 gap-4 p-8 ">
+        {/* Image Div */}
+        <div className="p-4">
+          <Image
+            src={nft.image}
+            alt="NFT Image"
+            width={600}
+            height={600}
+            className="rounded-xl shadow-lg"
+          />
+        </div>
+
+        {/* Car Data Div */}
+        <div className="px-4 py-10  pt-10 flex flex-col justify-between">
+          <div className="flex flex-row">
+           
+            {displayImage ? (
+              <Image
+                src={displayImage}
+                alt="Horizontal Scroll Image"
+                width={10}
+                height={10}
+              />
+            ) : (
+              <p className=""></p>
+            )}
+
+            <div className=" flex flex-col ml-2">
+              <h1 className="text-4xl font-bold font-poppins ">{nft.name}</h1>
+              {ownerAddress?.toLowerCase().toString() === wallet_address?.toLowerCase().toString() ?
+              <p className="font-poppins"> Owned by You</p>
+              :
+              <p className="font-poppins"> Owned by {shortenAddress(ownerAddress)}</p>
+            }
+            </div>
+          </div>
+
+          <div className=" flex flex-row w-96 h-52  justify-between  pt-5">
+            <Cards title="type" value={nftData?.attributes[1].value} />
+            <Cards title="level" value={nftData?.car_level} />
+          </div>
+
+          {/* {Progress Bar} */}
+
+          {/* <div className="space-y-4 mt-4">
           <div className="flex items-center">
             <ProgressBar title="Speed" value={50} />
           </div>
@@ -123,18 +184,20 @@ const page = () => {
           <p>Price:</p>
         </div> */}
 
+        <div className="space-y-2">
+          <p>BIO: {nftData?.description}</p>
+          <p>Price: X POL</p>
+        </div>
 
-
-
-        <div className="flex justify-end mt-4">
-          <Button
-            btnName="List"
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          />
+          <div className="flex justify-center mt-4">
+            <Button
+              btnName="List"
+              classStyles="w-[60%]"
+            />
+          </div>
         </div>
       </div>
     </div>
-  </div>
   );
 };
 

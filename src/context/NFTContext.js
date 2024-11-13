@@ -22,11 +22,14 @@ const settings = {
 
   const alchemy = new Alchemy(settings);
 
+  const rpc_url = process.env.ENV === "prod" ? process.env.NEXT_PUBLIC_PROD_RPC_URL : process.env.NEXT_PUBLIC_DEV_RPC_URL
+
 export const NFTProvider = ({ children }) => {
     const nftCurrency = 'POL';
     const gemCurrency = 'GEM';
 
     const [isLoadingNFT, setIsLoadingNFT] = useState(false);
+  
 
     const fetchNFTsListedForMint = async () => {
         try {
@@ -65,7 +68,7 @@ export const NFTProvider = ({ children }) => {
                 const uri = finalNfts[i].tokenUri
                 const {data: {metadata}} = await axios.post("https://game-cibqh.ondigitalocean.app/api/public/v0/get-nft-data-from-uri/", {uri})
                 console.log(metadata);
-                ownedNFTs.push(metadata)
+                ownedNFTs.push({...metadata, tokenId: finalNfts[i].tokenId})
             }
 
             console.log("Owned NFTs ===> " ,ownedNFTs);
@@ -80,8 +83,36 @@ export const NFTProvider = ({ children }) => {
           }
     }
 
+    const fetchNFTDataById = async(tokenId) => {
+        const provider = new ethers.JsonRpcProvider(rpc_url)
+        const nft_contract = fetchNftContract(provider)
+        const uri_old = await nft_contract.tokenURI(tokenId)
+        const uri = uri_old.replace("http://159.89.175.249:7070/","https://racecadecarsmetadata.blr1.cdn.digitaloceanspaces.com/")
+        // console.log("URI ====>",uri);
+        
+        
+
+        const {data: {metadata}} = await axios.post("https://game-cibqh.ondigitalocean.app/api/public/v0/get-nft-data-from-uri/", {uri})
+        // console.log("Metadata from fetchNFTDataById ==> ", metadata);
+        
+
+        return metadata;
+    }
+
+    const fetchOwnerOfNFT = async (tokenId) => {
+        try {
+        const provider = new ethers.JsonRpcProvider(rpc_url)
+        const nft_contract = fetchNftContract(provider)
+        const data = await nft_contract.ownerOf(tokenId);
+        console.log(data);
+        return data;
+        } catch (error) {
+            console.log("Err in fetchOwnerOfNFT ==> ", error);
+        }
+    }
+
     return(
-        <NFTContext.Provider value={{nftCurrency, gemCurrency, isLoadingNFT, fetchNFTsListedForMint, fetchMyNFTs}}>
+        <NFTContext.Provider value={{nftCurrency, gemCurrency, isLoadingNFT, fetchNFTsListedForMint, fetchMyNFTs, fetchNFTDataById,fetchOwnerOfNFT}}>
             {children}
         </NFTContext.Provider>
     )
