@@ -9,6 +9,8 @@ import { useAccount } from "wagmi"
 import { Network, Alchemy } from "alchemy-sdk";
 
 import { useActiveAccount } from "thirdweb/react";
+import { client } from "@/app/client"
+import { polygonAmoy } from "viem/chains"
 
 export const NFTContext = React.createContext();
 
@@ -111,6 +113,8 @@ export const NFTProvider = ({ children }) => {
         }
     }
 
+
+ 
     return(
         <NFTContext.Provider value={{nftCurrency, gemCurrency, isLoadingNFT, fetchNFTsListedForMint, fetchMyNFTs, fetchNFTDataById,fetchOwnerOfNFT}}>
             {children}

@@ -19,6 +19,7 @@ import Horizontal3 from "@/assets/Rectangle 3258.png";
 import Horizontal4 from "@/assets/Rectangle 3259.png";
 import Horizontal5 from "@/assets/Rectangle 3260.png";
 import ProfileBanner from "@/assets/ProfileBanner.png";
+import toast, { Toaster} from "react-hot-toast";
 
 import { useActiveAccount } from "thirdweb/react";
 
@@ -45,6 +46,9 @@ const page = () => {
 
   const router = useRouter();
   const searchParams = useSearchParams();
+  const walletConnected = !!activeAccount?.address
+
+
 
   const getNFTData = async () => {
     try {
@@ -117,7 +121,7 @@ const page = () => {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Banner Section */}
-
+       
       <Banner
         name="Your RaceCade Assets"
         childStyles="text-center mb-4"
