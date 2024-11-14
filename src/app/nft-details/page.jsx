@@ -19,14 +19,15 @@ import Horizontal3 from "@/assets/Rectangle 3258.png";
 import Horizontal4 from "@/assets/Rectangle 3259.png";
 import Horizontal5 from "@/assets/Rectangle 3260.png";
 import ProfileBanner from "@/assets/ProfileBanner.png";
-import toast, { Toaster} from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 
 import { useActiveAccount } from "thirdweb/react";
+import { ethers } from "ethers";
+import { market_abi, market_address } from "@/context/constants";
 
 const page = () => {
-
   const activeAccount = useActiveAccount();
-    const wallet_address = activeAccount?.address;
+  const wallet_address = activeAccount?.address;
 
   const { currentAccount } = useContext(NFTContext);
   const [isLoading, setIsLoading] = useState(true);
@@ -42,13 +43,12 @@ const page = () => {
     description: "",
   });
 
-  const { fetchMyNFTs, ownedNFTs, fetchNFTDataById, fetchOwnerOfNFT } = useContext(NFTContext);
+  const { fetchMyNFTs, ownedNFTs, fetchNFTDataById, fetchOwnerOfNFT } =
+    useContext(NFTContext);
 
   const router = useRouter();
   const searchParams = useSearchParams();
-  const walletConnected = !!activeAccount?.address
-
-
+  const walletConnected = !!activeAccount?.address;
 
   const getNFTData = async () => {
     try {
@@ -61,18 +61,20 @@ const page = () => {
     }
   };
 
-  const setOwnedUser =async () => {
+  const setOwnedUser = async () => {
     try {
-      const owner_data = await fetchOwnerOfNFT(Number(searchParams.get("tokenId")));
+      const owner_data = await fetchOwnerOfNFT(
+        Number(searchParams.get("tokenId"))
+      );
       console.log("owner_data:", owner_data);
       setOwnerAddress(owner_data);
-      
     } catch (error) {
-      return "Owner not Found"
+      return "Owner not Found";
     }
-  }
+  };
 
   
+
   useEffect(() => {
     getNFTData();
     setNft({
@@ -84,9 +86,9 @@ const page = () => {
       seller: searchParams.get("seller"),
       description: searchParams.get("description"),
     });
-    
+
     setOwnedUser();
-    
+
     if (currentAccount) fetchMyNFTs(currentAccount);
 
     setIsLoading(false);
@@ -101,7 +103,6 @@ const page = () => {
   }
 
   console.log("nftData", nftData);
-  
 
   const attributeValue = nftData?.attributes?.[0]?.value || null;
 
@@ -121,13 +122,12 @@ const page = () => {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Banner Section */}
-       
+
       <Banner
         name="Your RaceCade Assets"
         childStyles="text-center mb-4"
         parentStyle="h-80 justify-center"
       />
-
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-2 gap-4 p-8 ">
@@ -145,7 +145,6 @@ const page = () => {
         {/* Car Data Div */}
         <div className="px-4 py-10  pt-10 flex flex-col justify-between">
           <div className="flex flex-row">
-           
             {displayImage ? (
               <Image
                 src={displayImage}
@@ -159,11 +158,15 @@ const page = () => {
 
             <div className=" flex flex-col ml-2">
               <h1 className="text-4xl font-bold font-poppins ">{nft.name}</h1>
-              {ownerAddress?.toLowerCase().toString() === wallet_address?.toLowerCase().toString() ?
-              <p className="font-poppins"> Owned by You</p>
-              :
-              <p className="font-poppins"> Owned by {shortenAddress(ownerAddress)}</p>
-            }
+              {ownerAddress?.toLowerCase().toString() ===
+              wallet_address?.toLowerCase().toString() ? (
+                <p className="font-poppins"> Owned by You</p>
+              ) : (
+                <p className="font-poppins">
+                  {" "}
+                  Owned by {shortenAddress(ownerAddress)}
+                </p>
+              )}
             </div>
           </div>
 
@@ -188,16 +191,18 @@ const page = () => {
           <p>Price:</p>
         </div> */}
 
-        <div className="space-y-2">
-          <p>BIO: {nftData?.description}</p>
-          <p>Price: X POL</p>
-        </div>
+          <div className="space-y-2">
+            <p>BIO: {nftData?.description}</p>
+            <p>Price: X POL</p>
+          </div>
 
           <div className="flex justify-center mt-4">
-            <Button
-              btnName="List"
-              classStyles="w-[60%]"
-            />
+            {ownerAddress?.toLowerCase().toString() ===
+            wallet_address?.toLowerCase().toString() ? (
+              <Button btnName="List" classStyles="w-[60%] hover:scale-[1.05] transition-all"  handleClick={() => {}}/>
+            ) : (
+              <Button btnName="Buy" classStyles="w-[60%]" handleClick={() => {}}/>
+            )}
           </div>
         </div>
       </div>

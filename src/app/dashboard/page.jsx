@@ -17,7 +17,7 @@ import CoinsImage from "@/assets/Asset 4201x 1.png";
 
 
 const Dashboard = () => {
-    const { fetchMyNFTs } = useContext(NFTContext)
+    const { fetchMyNFTs, fetchUserBalance } = useContext(NFTContext)
 
     const activeAccount = useActiveAccount();
     const wallet_address = activeAccount?.address;
@@ -26,6 +26,13 @@ const Dashboard = () => {
     const [nfts, setNfts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [userData, setUserData] = useState(null)
+    const [userBalance, setUserBalance] = useState(null)
+
+    const getUserBalance = async() => {
+        if(!wallet_address) return
+        const user_balance = await fetchUserBalance(wallet_address)
+        setUserBalance(Number(user_balance / 1e18))
+    }
 
     
 
@@ -77,6 +84,7 @@ const Dashboard = () => {
             setIsLoading(false)
         });
         fetchUserData();
+        getUserBalance();
 
        
     }, [wallet_address]);
@@ -126,7 +134,7 @@ const Dashboard = () => {
 
 
     <div className="flex space-x-4">
-      <CurrCard title="Polygon" value= "Value" imageSrc={PolygonImage} />
+      <CurrCard title="Polygon" value={userBalance} imageSrc={PolygonImage} />
       <CurrCard title="Gems" value= {userData?.currency.gems} imageSrc={GemsImage} />
       <CurrCard title="Coins" value= {userData?.currency.coins} imageSrc={CoinsImage} />
     </div>

@@ -21,7 +21,7 @@ const CurrCard = ({ title, value, imageSrc }) => {
         </div>
         <hr className="border-gray-300 dark:border-gray-600 my-2" />
 
-        <p className="font-normal text-gray-700 dark:text-gray-400 text-sm sm:text-base">{value}</p> {/* Responsive text size */}
+        <p className="font-bold text-center text-2xl text-black dark:text-white  sm:text-base">{value}</p> {/* Responsive text size */}
       </div>
     </div>
   );
