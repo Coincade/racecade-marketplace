@@ -48,6 +48,7 @@ export const NFTProvider = ({ children }) => {
 
   const fetchNFTsListedForMint = async () => {
     try {
+      setIsLoadingNFT(true);
       const {
         data: { car_data },
       } = await axios.get(
@@ -65,6 +66,8 @@ export const NFTProvider = ({ children }) => {
     } catch (error) {
       console.log(error);
       return Error(error.message);
+    } finally {
+      setIsLoadingNFT(false);
     }
   };
 
