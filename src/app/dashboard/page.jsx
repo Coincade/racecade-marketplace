@@ -1,5 +1,6 @@
 "use client";
 
+import { useQuery } from "@tanstack/react-query";
 import React, { useState, useContext } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -9,7 +10,7 @@ import Banner from "@/components/Banner";
 import CurrCard from "@/components/CurrCard";
 import { shortenAddress } from "@/utils/shortenAddress";
 import Sidebar from "@/components/SideBar";
-import { Filter, LoaderIcon } from "lucide-react";
+import { Filter, Loader, LoaderIcon } from "lucide-react";
 import toast from "react-hot-toast";
 import { useActiveAccount } from "thirdweb/react";
 
@@ -18,7 +19,8 @@ import GemsImage from "@/assets/Asset 4211x 1.png";
 import CoinsImage from "@/assets/Asset 4201x 1.png";
 
 const Dashboard = () => {
-  const { fetchMyNFTs, fetchUserBalance } = useContext(NFTContext);
+  const { fetchMyNFTs, fetchUserBalance, isLoadingNFT } =
+    useContext(NFTContext);
 
   const activeAccount = useActiveAccount();
   const wallet_address = activeAccount?.address;
@@ -112,7 +114,7 @@ const Dashboard = () => {
       {/* Sidebar and Main Content Section */}
       <div className="flex w-full relative">
         {/* Sidebar Section */}
-        <div className="w-1/5 bg-nft-black-1  text-white -mt-24">
+        <div className="w-1/5 bg-[#24252D]  text-white -mt-28">
           <Sidebar
             setFilter={(filter) => {
               console.log(" Filter Set to:", filter);
@@ -152,11 +154,17 @@ const Dashboard = () => {
               <div className="flex-1 w-full flex flex-row sm:flex-col px-4 xs:px-0 minlg:px-8">
                 Search Bar
               </div>
-              <div className="mt-3 w-full flex flex-wrap">
-                {nfts?.map((nft, index) => (
-                  <NFTCard key={index} nft={nft} />
-                ))}
-              </div>
+              {isLoadingNFT ? (
+                <div className="w-full h-[30dvh] flex items-center justify-center">
+                  <Loader className="size-10 animate-spin  dark:bg-gray-800" />
+                </div>
+              ) : (
+                <div className="mt-3 w-full flex flex-wrap">
+                  {nfts?.map((nft, index) => (
+                    <NFTCard key={index} nft={nft} />
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </div>
