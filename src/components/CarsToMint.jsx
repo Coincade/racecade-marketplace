@@ -15,6 +15,8 @@ const CarsToMint = () => {
             console.log("cars: ", items);
         })
     }, []);
+
+    
     return (
         <>
         <div className="mt-3 flex flex-wrap justify-start md:justify-center">

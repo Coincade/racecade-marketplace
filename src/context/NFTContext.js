@@ -68,7 +68,7 @@ export const NFTProvider = ({ children }) => {
     }
   };
 
-  const fetchMyNFTs = async (wallet_address) => {
+  const fetchMyNFTs = async (wallet_address, filter = "") => {
     try {
       setIsLoadingNFT(true);
       if (!wallet_address) return [];
@@ -76,9 +76,10 @@ export const NFTProvider = ({ children }) => {
       const nftsForOwner = await alchemy.nft.getNftsForOwner(wallet_address);
 
       const nftsArray = nftsForOwner.ownedNfts;
-      let finalNfts = nftsArray.filter(
-        (nft) => nft.contract.address == nft_address
-      );
+      let finalNfts = nftsArray.filter((nft) => {
+        return nft.contract.address == nft_address;
+      });
+
       console.log("Final NFTS ====>", finalNfts);
       let ownedNFTs = [];
 
@@ -90,8 +91,9 @@ export const NFTProvider = ({ children }) => {
           "https://game-cibqh.ondigitalocean.app/api/public/v0/get-nft-data-from-uri/",
           { uri }
         );
-        console.log(metadata);
-        ownedNFTs.push({ ...metadata, tokenId: finalNfts[i].tokenId });
+        console.log("metaDataa ===>", metadata);
+        if (filter === "" || metadata.attributes?.[0].value === filter)
+          ownedNFTs.push({ ...metadata, tokenId: finalNfts[i].tokenId });
       }
 
       console.log("Owned NFTs ===> ", ownedNFTs);
@@ -148,7 +150,7 @@ export const NFTProvider = ({ children }) => {
         fetchMyNFTs,
         fetchNFTDataById,
         fetchOwnerOfNFT,
-        fetchUserBalance
+        fetchUserBalance,
       }}
     >
       {children}
