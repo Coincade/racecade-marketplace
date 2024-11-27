@@ -10,7 +10,8 @@ import { Network, Alchemy } from "alchemy-sdk";
 
 import { useActiveAccount } from "thirdweb/react";
 import { client } from "@/app/client";
-import { polygonAmoy } from "viem/chains";
+import { polygonAmoy } from "thirdweb/chains";
+import { Loader } from "lucide-react";
 
 export const NFTContext = React.createContext();
 
@@ -143,6 +144,36 @@ export const NFTProvider = ({ children }) => {
     }
   };
 
+  const fetchListedNFTs = async () => {
+    setIsLoadingNFT(true);
+    try {
+      const listedNFTs = [];
+      const provider = new ethers.JsonRpcProvider(rpc_url);
+      const market_contract = fetchMarketContract(provider);
+      const item_count = Number(await market_contract.itemCount());
+      console.log("Item Count: ", item_count);
+
+      for (let i = 1; i <= Number(item_count); i++) {
+        const data = await market_contract.items(i);
+        let obj = {
+          listedId: Number(data[0]),
+          ownerAddress: data[1],
+          tokenId: Number(data[2]),
+          listedPrice: Number(data[3]),
+          sellerAddress: data[4],
+          isSold: data[5],
+        };
+        listedNFTs.push(obj);
+      }
+      console.log("Listed NFTs ===>", listedNFTs);
+      return listedNFTs;
+    } catch (error) {
+      console.log(" ERR in fetching market contrcat ===>", error);
+    } finally {
+      setIsLoadingNFT(false);
+    }
+  };
+
   return (
     <NFTContext.Provider
       value={{
@@ -154,6 +185,7 @@ export const NFTProvider = ({ children }) => {
         fetchNFTDataById,
         fetchOwnerOfNFT,
         fetchUserBalance,
+        fetchListedNFTs,
       }}
     >
       {children}

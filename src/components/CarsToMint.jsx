@@ -1,8 +1,8 @@
 "use client";
 import { NFTContext } from "@/context/NFTContext";
 import { useState, useEffect, useContext } from "react";
-import CarCard from "@/components/CarCard";
 import { Loader } from "lucide-react";
+import NFTCard from "./NFTCard";
 
 const CarsToMint = () => {
   const { fetchNFTsListedForMint } = useContext(NFTContext);
@@ -25,7 +25,7 @@ const CarsToMint = () => {
       ) : (
         <div className="mt-3 flex flex-wrap justify-start md:justify-center">
           {cars?.map((nft, index) => (
-            <CarCard key={index} nft={nft} />
+            <NFTCard key={index} nft={nft} />
           ))}
         </div>
       )}

@@ -1,6 +1,5 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
 import React, { useState, useContext } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
