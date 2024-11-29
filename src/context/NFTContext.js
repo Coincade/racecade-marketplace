@@ -111,27 +111,49 @@ export const NFTProvider = ({ children }) => {
     }
   };
 
+  // const fetchNFTDataById = async (tokenId) => {
+  //   const provider = new ethers.JsonRpcProvider(rpc_url);
+  //   const nft_contract = fetchNftContract(provider);
+  //   const uri_old = await nft_contract.tokenURI(tokenId);
+  //   const uri = uri_old.replace(
+  //     "http://159.89.175.249:7070/",
+  //     "https://racecadecarsmetadata.blr1.cdn.digitaloceanspaces.com/"
+  //   );
+  //   // console.log("URI ====>",uri);
+
+  //   const {
+  //     data: { metadata },
+  //   } = await axios.post(
+  //     "https://game-cibqh.ondigitalocean.app/api/public/v0/get-nft-data-from-uri/",
+  //     { uri }
+  //   );
+  //   // console.log("Metadata from fetchNFTDataById ==> ", metadata);
+
+  //   return metadata;
+  // };
+
   const fetchNFTDataById = async (tokenId) => {
-    const provider = new ethers.JsonRpcProvider(rpc_url);
-    const nft_contract = fetchNftContract(provider);
-    const uri_old = await nft_contract.tokenURI(tokenId);
-    const uri = uri_old.replace(
-      "http://159.89.175.249:7070/",
-      "https://racecadecarsmetadata.blr1.cdn.digitaloceanspaces.com/"
-    );
-    // console.log("URI ====>",uri);
+    try {
+      const provider = new ethers.JsonRpcProvider(rpc_url);
+      const nft_contract = fetchNftContract(provider);
+      const uri_old = await nft_contract.tokenURI(tokenId);
+      const uri = uri_old.replace(
+        "http://159.89.175.249:7070/",
+        "https://racecadecarsmetadata.blr1.cdn.digitaloceanspaces.com/"
+      );
 
-    const {
-      data: { metadata },
-    } = await axios.post(
-      "https://game-cibqh.ondigitalocean.app/api/public/v0/get-nft-data-from-uri/",
-      { uri }
-    );
-    // console.log("Metadata from fetchNFTDataById ==> ", metadata);
+      // Fetch the metadata from the URI
+      const response = await fetch(uri);
+      if (!response.ok)
+        throw new Error(`Failed to fetch metadata: ${response.statusText}`);
+      const metadata = await response.json();
 
-    return metadata;
+      return metadata;
+    } catch (error) {
+      console.error("Error fetching NFT data by ID:", error);
+      throw error; // Let the caller handle it
+    }
   };
-
   const fetchOwnerOfNFT = async (tokenId) => {
     try {
       const provider = new ethers.JsonRpcProvider(rpc_url);

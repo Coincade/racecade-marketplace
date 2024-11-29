@@ -31,15 +31,15 @@ const NFTCard = ({ nft }) => {
         <div className="flex justify-center">{stars}</div>
         <div className="relative w-full h-52 sm:h-36 xs:h-56 minmd:h-60 minlg:h-300 rounded-2xl overflow-hidden">
           <Image
-            src={nft.image}
+            src={nft?.image}
             layout="fill"
             objectFit="contain"
-            alt={nft.name}
+            alt={nft?.name || "no"}
           />
         </div>
         <div className="mt-3 flex justify-between items-center">
           <p className="font-poppins dark:text-white text-nft-black-1 font-semibold text-sm minlg:text-xl">
-            {nft.name}
+            {nft?.name}
           </p>
 
           <div>

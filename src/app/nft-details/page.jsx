@@ -55,6 +55,7 @@ const page = () => {
       const nft_data = await fetchNFTDataById(
         Number(searchParams.get("tokenId"))
       );
+
       setNftData(nft_data);
     } catch (error) {
       return {};
@@ -72,8 +73,6 @@ const page = () => {
       return "Owner not Found";
     }
   };
-
-  
 
   useEffect(() => {
     getNFTData();
@@ -199,9 +198,17 @@ const page = () => {
           <div className="flex justify-center mt-4">
             {ownerAddress?.toLowerCase().toString() ===
             wallet_address?.toLowerCase().toString() ? (
-              <Button btnName="List" classStyles="w-[60%] hover:scale-[1.05] transition-all"  handleClick={() => {}}/>
+              <Button
+                btnName="List"
+                classStyles="w-[60%] hover:scale-[1.05] transition-all"
+                handleClick={() => {}}
+              />
             ) : (
-              <Button btnName="Buy" classStyles="w-[60%]" handleClick={() => {}}/>
+              <Button
+                btnName="Buy"
+                classStyles="w-[60%]"
+                handleClick={() => {}}
+              />
             )}
           </div>
         </div>

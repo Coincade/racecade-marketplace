@@ -1,22 +1,37 @@
 "use client";
 
-import React, { useContext, useEffect, useState, useSearchParams } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { NFTContext } from "@/context/NFTContext";
 import CarCard from "@/components/CarCard";
-
+import { useSearchParams } from "next/navigation";
 import { Loader } from "lucide-react";
+import NFTCard from "@/components/NFTCard";
+import Sidebar from "@/components/SideBar";
 
 const Trade = () => {
   const { fetchListedNFTs, setIsLoadingNFT, fetchNFTDataById } =
     useContext(NFTContext);
   const [marketplaceData, setMarketplaceData] = useState([]);
+  const [nftData, setNftData] = useState([]);
   const [error, setError] = useState(null);
 
+  const searchParams = useSearchParams();
+
   useEffect(() => {
+    // setNftData({
+    //   image: searchParams.get("image"),
+    //   tokenId: searchParams.get("tokenId"),
+    //   name: searchParams.get("name"),
+    //   owner: searchParams.get("owner"),
+    //   price: searchParams.get("price"),
+    //   seller: searchParams.get("seller"),
+    //   description: searchParams.get("description"),
+    // });
     const fetchData = async () => {
       try {
         const data = await fetchListedNFTs();
         if (data) {
+          console.log(" data from trade =>>>", data);
           setMarketplaceData(data);
         } else {
           console.log("No data is returned from marketplace ");
@@ -27,7 +42,29 @@ const Trade = () => {
       }
     };
     fetchData();
+    getMarketplace();
   }, []);
+
+  const getMarketplace = async () => {
+    const data = await fetchListedNFTs();
+    console.log(data);
+
+    const allMetaData = [];
+
+    for (let i = 0; i < data.length; i++) {
+      try {
+        const market_data = await fetchNFTDataById(Number(data[i].tokenId));
+        console.log("Token ID==>", Number(data[i].tokenId));
+
+        allMetaData.push(market_data);
+        console.log("Market Car Data", market_data);
+      } catch (error) {
+        return console.log("errrr", error);
+      }
+    }
+    setNftData(allMetaData);
+    console.log(" All metaData ==>", allMetaData);
+  };
 
   return (
     // <div className="pt-10">
@@ -49,19 +86,21 @@ const Trade = () => {
     //   </div>
     // </div>
 
-    <>
+    <div>
+      <Sidebar />
       {setIsLoadingNFT ? (
-        <div className="w-full h-[30dvh] flex items-center justify-center">
+        <div className="w-full h-[30dvh] flex items-center justify-center ">
           <Loader className="size-10 animate-spin  dark:bg-gray-800" />
         </div>
       ) : (
-        <div className="mt-3 flex flex-wrap justify-start md:justify-center">
-          {marketplaceData?.map((nft, index) => (
-            <CarCard key={index} nft={nft} />
+        <div className="mt-3 flex flex-wrap justify-start md:justify-center border-white">
+          <div className=" flex "> </div>
+          {nftData?.map((nft, index) => (
+            <NFTCard key={index} nft={nft} />
           ))}
         </div>
       )}
-    </>
+    </div>
   );
 };
 
