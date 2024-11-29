@@ -18,7 +18,7 @@ const Sidebar = ({ setFilter }) => {
   //  console.log('Car Class1', carss?.attributes?.[1]?.value)
 
   return (
-    <div className="w-64 h-screen bg-[#24252D] text-white p-4 space-y-4">
+    <div className="w-64 h-screen bg-[#24252D] text-white p-4 space-y-4 border-white border">
       <h2 className="text-2xl font-semibold mb-6">Heading</h2>
 
       {/* Class Section */}

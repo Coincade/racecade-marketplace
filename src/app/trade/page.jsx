@@ -7,13 +7,15 @@ import { useSearchParams } from "next/navigation";
 import { Loader } from "lucide-react";
 import NFTCard from "@/components/NFTCard";
 import Sidebar from "@/components/SideBar";
+import Banner from "@/components/Banner";
 
 const Trade = () => {
-  const { fetchListedNFTs, setIsLoadingNFT, fetchNFTDataById } =
+  const { fetchListedNFTs, setIsLoadingNFT, fetchNFTDataById,isLoadingNFT } =
     useContext(NFTContext);
   const [marketplaceData, setMarketplaceData] = useState([]);
   const [nftData, setNftData] = useState([]);
   const [error, setError] = useState(null);
+ 
 
   const searchParams = useSearchParams();
 
@@ -86,20 +88,33 @@ const Trade = () => {
     //   </div>
     // </div>
 
-    <div>
-      <Sidebar />
-      {setIsLoadingNFT ? (
-        <div className="w-full h-[30dvh] flex items-center justify-center ">
-          <Loader className="size-10 animate-spin  dark:bg-gray-800" />
+    <div className=" border-2 min-h-screen  ">
+      {/* <Sidebar /> */}
+      <Banner
+        name="Your RaceCade Assets"
+        childStyles="text-center mb-4"
+        parentStyle="h-80 justify-center"
+
+      />
+
+     <div className=" border border-red-500 grid grid-cols-4 ">
+
+     <Sidebar/>
+     <div className=" border border-pink-400 ">
+      {isLoadingNFT ? (
+        <div className="w-full h-[30dvh] flex items-center justify-center  ">
+          <Loader className="size-10 animate-spin  dark:bg-gray-800 " />
         </div>
       ) : (
-        <div className="mt-3 flex flex-wrap justify-start md:justify-center border-white">
+        <div className="mt-3 flex flex-wrap justify-start md:justify-center border-white ">
           <div className=" flex "> </div>
           {nftData?.map((nft, index) => (
             <NFTCard key={index} nft={nft} />
           ))}
         </div>
       )}
+      </div>
+      </div>
     </div>
   );
 };
