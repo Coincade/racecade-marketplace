@@ -79,6 +79,16 @@ export const NFTProvider = ({ children }) => {
 
       const nftsForOwner = await alchemy.nft.getNftsForOwner(wallet_address);
 
+      /*
+      TODO:
+      1. Get Instance of NFT marketplace
+      2. run a for loop untill you find the tokenId
+      3. match the element on index number [2]
+      4. if this index matches - spread ownedNFTs object and add the price key and value.
+      5. price value is on [3] index in the data 
+      */ 
+      // fetchMarketContract
+
       const nftsArray = nftsForOwner.ownedNfts;
       let finalNfts = nftsArray.filter((nft) => {
         return nft.contract.address == nft_address;
@@ -110,28 +120,6 @@ export const NFTProvider = ({ children }) => {
       setIsLoadingNFT(false);
     }
   };
-
-  // const fetchNFTDataById = async (tokenId) => {
-  //   const provider = new ethers.JsonRpcProvider(rpc_url);
-  //   const nft_contract = fetchNftContract(provider);
-  //   const uri_old = await nft_contract.tokenURI(tokenId);
-  //   const uri = uri_old.replace(
-  //     "http://159.89.175.249:7070/",
-  //     "https://racecadecarsmetadata.blr1.cdn.digitaloceanspaces.com/"
-  //   );
-  //   // console.log("URI ====>",uri);
-
-  //   const {
-  //     data: { metadata },
-  //   } = await axios.post(
-  //     "https://game-cibqh.ondigitalocean.app/api/public/v0/get-nft-data-from-uri/",
-  //     { uri }
-  //   );
-  //   // console.log("Metadata from fetchNFTDataById ==> ", metadata);
-
-  //   return metadata;
-  // };
-
   const fetchNFTDataById = async (tokenId) => {
     try {
       const provider = new ethers.JsonRpcProvider(rpc_url);
@@ -148,7 +136,10 @@ export const NFTProvider = ({ children }) => {
         throw new Error(`Failed to fetch metadata: ${response.statusText}`);
       const metadata = await response.json();
 
-      return metadata;
+      return {
+        ...metadata,
+        tokenId
+      };
     } catch (error) {
       console.error("Error fetching NFT data by ID:", error);
       throw error; // Let the caller handle it
@@ -196,6 +187,40 @@ export const NFTProvider = ({ children }) => {
     }
   };
 
+  const getMarketId = async(_tokenId) => {
+    try {
+      setIsLoadingNFT(true);
+      const provider = new ethers.JsonRpcProvider(rpc_url);
+      const market_contract = fetchMarketContract(provider);
+      const item_count = Number(await market_contract.itemCount());
+      console.log("Item Count: ", item_count);
+
+      for (let i = 1; i <= item_count; i++) {
+        const data = await market_contract.items(i);
+        
+        let obj = {
+          listedId: Number(data[0]),
+          ownerAddress: data[1],
+          tokenId: Number(data[2]),
+          listedPrice: Number(data[3]),
+          sellerAddress: data[4],
+          isSold: data[5],
+        };
+        if(Number(obj.tokenId) == Number(_tokenId)){
+          console.log("Data in Loop => ", obj.tokenId);
+          return obj.listedId
+        }        
+      }
+      return 0;
+
+    } catch (error) {
+      console.log(" ERR in fetching market contrcat ===>", error);
+    }
+    finally {
+      setIsLoadingNFT(false);
+    }
+  }
+
   return (
     <NFTContext.Provider
       value={{
@@ -208,6 +233,7 @@ export const NFTProvider = ({ children }) => {
         fetchOwnerOfNFT,
         fetchUserBalance,
         fetchListedNFTs,
+        getMarketId
       }}
     >
       {children}

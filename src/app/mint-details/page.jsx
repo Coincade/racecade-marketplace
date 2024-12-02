@@ -2,9 +2,7 @@
 import { useState, useEffect, useContext } from "react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
-import { getContract } from "thirdweb";
-import { polygonAmoy, sepolia } from "thirdweb/chains";
-import { useReadContract } from "thirdweb/react";
+
 import { NFTContext } from "@/context/NFTContext";
 import NFTCard from "@/components/NFTCard";
 import Banner from "@/components/Banner";
@@ -26,7 +24,6 @@ import toast, { Toaster } from "react-hot-toast";
 import { useActiveAccount } from "thirdweb/react";
 import { ethers } from "ethers";
 import { market_abi, market_address } from "@/context/constants";
-import { client } from "../client";
 
 const page = () => {
   const activeAccount = useActiveAccount();
@@ -36,7 +33,6 @@ const page = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [nftData, setNftData] = useState(null);
   const [ownerAddress, setOwnerAddress] = useState("");
-  const [itemId, setItemId] = useState();
   const [nftPrice, setNftPrice] = useState(0);
   const [nft, setNft] = useState({
     image: "",
@@ -48,54 +44,23 @@ const page = () => {
     description: "",
   });
 
-  const market_contract_thirdweb = getContract({
-    client,
-    address: market_address,
-    chain: polygonAmoy,
-  });
-
-  const {
-    fetchMyNFTs,
-    ownedNFTs,
-    fetchNFTDataById,
-    fetchOwnerOfNFT,
-    getMarketId,
-  } = useContext(NFTContext);
+  const { fetchMyNFTs, ownedNFTs, fetchNFTDataById, fetchOwnerOfNFT } =
+    useContext(NFTContext);
 
   const router = useRouter();
   const searchParams = useSearchParams();
   const walletConnected = !!activeAccount?.address;
-
-  const { data: item, isPending } = useReadContract({
-    contract: market_contract_thirdweb,
-    method:
-      "function items(uint256) view returns (uint256 itemId, address nft, uint256 tokenId, uint256 price, address seller, bool sold)",
-    params: [itemId],
-  });
-
-  console.log("Item: ",item);
-  
 
   const getNFTData = async () => {
     try {
       const nft_data = await fetchNFTDataById(
         Number(searchParams.get("tokenId"))
       );
-      // console.log("TokenId:", Number(searchParams.get("tokenId")));
-      // console.log(" Get Nft data", nft_data);
+
       setNftData(nft_data);
     } catch (error) {
-      console.log(error);
+      return {};
     }
-  };
-
-  const getMarketIdFromBlockchain = async () => {
-    // console.log("token id frm: getMarketIdFromBlockchain", tokenId);
-    
-    const item_id = await getMarketId(nft?.tokenId);
-    setItemId(BigInt(item_id));
-    console.log("Item Id: ", itemId);
-    
   };
 
   const setOwnedUser = async () => {
@@ -103,34 +68,46 @@ const page = () => {
       const owner_data = await fetchOwnerOfNFT(
         Number(searchParams.get("tokenId"))
       );
-      // console.log("owner_data:", owner_data);
+      console.log("owner_data:", owner_data);
       setOwnerAddress(owner_data);
     } catch (error) {
       return "Owner not Found";
     }
   };
 
+  const setNftPriceFromBlockchain = async (_tokenId) => {
+    try {
+      console.log("token_id: ", _tokenId);
+      
+      const data = await getPriceforNft()
+      console.log("data from setNftPriceFromBlockchain: ", data);
+      
+      setNftPrice(data);
+    } catch (error) {
+      console.log("Error from setNftPriceFromBlockchain", error);
+      
+    }
+  }
+
   useEffect(() => {
     getNFTData();
     setNft({
       image: searchParams.get("image"),
-      tokenId: searchParams.get("tokenId")
-        ? Number(searchParams.get("tokenId"))
-        : null,
+      tokenId: searchParams.get("tokenId"),
       name: searchParams.get("name"),
       owner: searchParams.get("owner"),
       price: searchParams.get("price"),
       seller: searchParams.get("seller"),
       description: searchParams.get("description"),
     });
+    setNftPriceFromBlockchain(nft.tokenId);
 
     setOwnedUser();
-    getMarketIdFromBlockchain();
 
     if (currentAccount) fetchMyNFTs(currentAccount);
 
     setIsLoading(false);
-  }, [currentAccount, fetchMyNFTs, searchParams, itemId]);
+  }, [currentAccount, fetchMyNFTs, searchParams]);
 
   if (isLoading) {
     return (
@@ -231,7 +208,7 @@ const page = () => {
 
           <div className="space-y-2">
             <p>BIO: {nftData?.description}</p>
-            <p>Price: {isPending ? 0 : Number(item[3]) / 1e18} POL</p>
+            <p>Price: {nftPrice} POL</p>
           </div>
 
           <div className="flex justify-center mt-4">

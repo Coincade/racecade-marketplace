@@ -6,7 +6,11 @@ import Script from "next/script";
 import { ThemeProvider } from "next-themes";
 import { NFTProvider } from "@/context/NFTContext";
 import { ThirdwebProvider } from "thirdweb/react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import {
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query'
+
 
 const queryClient = new QueryClient();
 

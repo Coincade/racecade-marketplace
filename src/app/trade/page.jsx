@@ -29,21 +29,21 @@ const Trade = () => {
     //   seller: searchParams.get("seller"),
     //   description: searchParams.get("description"),
     // });
-    const fetchData = async () => {
-      try {
-        const data = await fetchListedNFTs();
-        if (data) {
-          console.log(" data from trade =>>>", data);
-          setMarketplaceData(data);
-        } else {
-          console.log("No data is returned from marketplace ");
-        }
-      } catch (err) {
-        console.error(" Error fetching data from marketplace ", err);
-        setError(err.message || "An error occurred");
-      }
-    };
-    fetchData();
+    // const fetchData = async () => {
+    //   try {
+    //     const data = await fetchListedNFTs();
+    //     if (data) {
+    //       console.log(" data from trade =>>>", data);
+    //       setMarketplaceData(data);
+    //     } else {
+    //       console.log("No data is returned from marketplace ");
+    //     }
+    //   } catch (err) {
+    //     console.error(" Error fetching data from marketplace ", err);
+    //     setError(err.message || "An error occurred");
+    //   }
+    // };
+    // fetchData();
     getMarketplace();
   }, []);
 
@@ -58,8 +58,10 @@ const Trade = () => {
         const market_data = await fetchNFTDataById(Number(data[i].tokenId));
         console.log("Token ID==>", Number(data[i].tokenId));
 
-        allMetaData.push(market_data);
-        console.log("Market Car Data", market_data);
+        const datamarket = {...market_data, tokenId: Number(data[i].tokenId) }
+
+        allMetaData.push(datamarket);
+        console.log("Market Car Data", datamarket);
       } catch (error) {
         return console.log("errrr", error);
       }
