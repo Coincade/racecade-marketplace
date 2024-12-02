@@ -11,7 +11,6 @@ import { Network, Alchemy } from "alchemy-sdk";
 import { useActiveAccount } from "thirdweb/react";
 import { client } from "@/app/client";
 import { polygonAmoy } from "thirdweb/chains";
-import { Loader } from "lucide-react";
 
 export const NFTContext = React.createContext();
 
@@ -233,7 +232,6 @@ export const NFTProvider = ({ children }) => {
         fetchOwnerOfNFT,
         fetchUserBalance,
         fetchListedNFTs,
-        getMarketId
       }}
     >
       {children}

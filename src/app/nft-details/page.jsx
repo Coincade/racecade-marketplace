@@ -27,6 +27,9 @@ import { useActiveAccount } from "thirdweb/react";
 import { ethers } from "ethers";
 import { market_abi, market_address } from "@/context/constants";
 import { client } from "../client";
+import { useQuery } from "@tanstack/react-query";
+import { getMarketId } from "@/actions/blockchain";
+import { useMarketId } from "@/hooks/blockchain-hooks";
 
 const page = () => {
   const activeAccount = useActiveAccount();
@@ -54,26 +57,34 @@ const page = () => {
     chain: polygonAmoy,
   });
 
-  const {
-    fetchMyNFTs,
-    ownedNFTs,
-    fetchNFTDataById,
-    fetchOwnerOfNFT,
-    getMarketId,
-  } = useContext(NFTContext);
+  const { fetchMyNFTs, ownedNFTs, fetchNFTDataById, fetchOwnerOfNFT } =
+    useContext(NFTContext);
 
   const router = useRouter();
   const searchParams = useSearchParams();
   const walletConnected = !!activeAccount?.address;
 
-  const { data: item, isPending } = useReadContract({
-    contract: market_contract_thirdweb,
-    method:
-      "function items(uint256) view returns (uint256 itemId, address nft, uint256 tokenId, uint256 price, address seller, bool sold)",
-    params: [itemId],
-  });
+  const token_id = searchParams.get("tokenId")
+  console.log("tokenId ===>", token_id);
+  
 
-  console.log("Item: ",item);
+  const {
+    data: marketId,
+    isLoading: isMakertIdLoading,
+    isError,
+    error,
+  } = useMarketId(Number(token_id));
+  console.log("MarketId: ", marketId);
+  
+
+    const { data: item, isPending } = useReadContract({
+      contract: market_contract_thirdweb,
+      method:
+        "function items(uint256) view returns (uint256 itemId, address nft, uint256 tokenId, uint256 price, address seller, bool sold)",
+      params: [marketId],
+    });
+
+    console.log("Item: ", item);
   
 
   const getNFTData = async () => {
@@ -89,14 +100,14 @@ const page = () => {
     }
   };
 
-  const getMarketIdFromBlockchain = async () => {
-    // console.log("token id frm: getMarketIdFromBlockchain", tokenId);
-    
-    const item_id = await getMarketId(nft?.tokenId);
-    setItemId(BigInt(item_id));
-    console.log("Item Id: ", itemId);
-    
-  };
+  // const getMarketIdFromBlockchain = async () => {
+  //   // console.log("token id frm: getMarketIdFromBlockchain", tokenId);
+
+  //   const item_id = await getMarketId(nft?.tokenId);
+  //   setItemId(BigInt(item_id));
+  //   console.log("Item Id: ", itemId);
+
+  // };
 
   const setOwnedUser = async () => {
     try {
@@ -125,12 +136,12 @@ const page = () => {
     });
 
     setOwnedUser();
-    getMarketIdFromBlockchain();
+    // getMarketIdFromBlockchain();
 
     if (currentAccount) fetchMyNFTs(currentAccount);
 
     setIsLoading(false);
-  }, [currentAccount, fetchMyNFTs, searchParams, itemId]);
+  }, [currentAccount, fetchMyNFTs, searchParams]);
 
   if (isLoading) {
     return (
@@ -155,6 +166,14 @@ const page = () => {
     displayImage = Horizontal3;
   } else if (attributeValue === "C") {
     displayImage = Horizontal5;
+  }
+
+  if(isError){
+    return(
+      <div className="pt-20">
+      {error.toString()}
+      </div>
+    )
   }
 
   return (
@@ -231,7 +250,7 @@ const page = () => {
 
           <div className="space-y-2">
             <p>BIO: {nftData?.description}</p>
-            <p>Price: {isPending ? 0 : Number(item[3]) / 1e18} POL</p>
+            {!isPending && <p> {Number(item[3]) / 1e18} POL</p>}
           </div>
 
           <div className="flex justify-center mt-4">
